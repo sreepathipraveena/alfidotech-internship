@@ -1,0 +1,65 @@
+# ===============================================================
+# 🚀 AI Internship — TASK-3 : NLP Sentiment Analysis with Emoji (Tkinter App)
+# ===============================================================
+
+import tkinter as tk
+from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
+import sys
+import subprocess
+
+# ------------------ Step 0: Install NLTK if missing ------------------
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+try:
+    nltk.data.find('sentiment/vader_lexicon.zip')
+except:
+    install("nltk")
+    nltk.download('vader_lexicon')
+
+# ------------------ Step 1: Initialize Sentiment Analyzer ------------------
+sia = SentimentIntensityAnalyzer()
+
+# ------------------ Step 2: Function to get sentiment + emoji ------------------
+def sentiment_with_emoji(text):
+    score = sia.polarity_scores(text)['compound']
+    if score > 0.05:
+        return "Positive 😀"
+    elif score < -0.05:
+        return "Negative 😞"
+    else:
+        return "Neutral 😐"
+
+# ------------------ Step 3: Tkinter GUI ------------------
+def analyze_sentiment():
+    text = entry.get()
+    if text.strip() == "":
+        result_label.config(text="Please enter a sentence.")
+    else:
+        sentiment = sentiment_with_emoji(text)
+        result_label.config(text=f"Sentiment: {sentiment}")
+
+# Create main window
+root = tk.Tk()
+root.title("Sentiment Analysis with Emoji")
+root.geometry("500x200")
+
+# Heading
+heading = tk.Label(root, text="Sentiment Analysis with Emoji 😃😞", font=("Arial", 16, "bold"))
+heading.pack(pady=10)
+
+# Entry box
+entry = tk.Entry(root, width=60, font=("Arial", 12))
+entry.pack(pady=10)
+
+# Analyze button
+analyze_btn = tk.Button(root, text="Analyze Sentiment", command=analyze_sentiment, bg="lightblue", font=("Arial", 12, "bold"))
+analyze_btn.pack(pady=5)
+
+# Result label
+result_label = tk.Label(root, text="", font=("Arial", 14, "bold"))
+result_label.pack(pady=10)
+
+# Run the GUI loop
+root.mainloop()
